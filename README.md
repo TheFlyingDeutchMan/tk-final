@@ -8,16 +8,13 @@ python3 -m pip install --user pipenv
 pipenv install
 
 ```
-
-# How to set up test:
-
+# How to test:
 ```
 pipenv run behave
 ```
-
-# How to test:
-
+# How to run the program:
+```
+pipenv run python3 assessmentv3.py
+```
 # Todo:
-remove lower output listing numbers
-show date in output listing
-
+all done

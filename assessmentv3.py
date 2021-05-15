@@ -26,8 +26,7 @@ def quit():
 
 # print_names
 def print_names():
-    global events_list, total_entries
-    name_count = 0
+    global events_list
     table_header = 10
     table_body = 11
     Label(main_window, font='bold', text="Row").grid(             column=0, row=table_header)
@@ -36,30 +35,33 @@ def print_names():
     Label(main_window, font='bold', text="Email").grid(           column=4, row=table_header)
     Label(main_window, font='bold', text="Venue").grid(           column=6, row=table_header)
     Label(main_window, font='bold', text="Date").grid(            column=8, row=table_header)
+
+    print ("events list", events_list)
     # The Output
-    while name_count < total_entries:
+    for entry_index, entry in enumerate(events_list):
+        print ("entry", entry)
         # RowNum - Done
-        Label(main_window, text=name_count).grid(column=0, row=name_count+11)
+        Label(main_window, text=entry_index).grid(column=0, row=table_body+entry_index)
         # Name - Done
-        Label(main_window, text=(events_list[name_count][0])).grid(
-            column=1, row=name_count+11)
-        #TODO: num of peps- wip | y?: ver if int < 10 , > 0
-        Label(main_window, text=(events_list[name_count][1])).grid(
-            column=2, row=name_count+11)
+        Label(main_window, text=entry['name']).grid(
+            column=1, row=table_body+entry_index)
+        # no of people
+        Label(main_window, text=entry['peeps']).grid(
+            column=2, row=table_body+entry_index)
         # Email - Done
-        Label(main_window, text=(events_list[name_count][2])).grid(
-            column=4, row=name_count+11)
-        #FIXME: Venue - wip | y?: ver if it exceeds the capcity limit ()
-        Label(main_window, text=(events_list[name_count][3])).grid(
-            column=6, row=name_count+11)
+        Label(main_window, text=entry['email']).grid(
+            column=4, row=table_body+entry_index)
+        # Venue
+        Label(main_window, text=entry['venue']).grid(
+            column=6, row=table_body+entry_index)
         #FIXME: Date - wip | opt | y?: ver if it's in present or near future
         # SOLVED: Just update it manually to solve the probelm. As this project isn't requesting an advanced solution to fix the problem, this includes the where the errors lie, as the method used is a general error, so it'll just prevent anything going forward. You could modify it just stating 'Please re-check if you've entered the values correctly.
-        Label(main_window, text=(events_list[name_count][4])).grid(
-            column=8, row=name_count+11)
-        name_count += 1
+        Label(main_window, text=entry['date']).grid(
+            column=8, row=table_body+entry_index)
 
 # The calendar function shows the calander when clicked (acts as a widgit)
 def tk_calendar(): #
+    global cal
     cal = DateEntry(main_window, width=12, year=2021, month=5, day=12,
     background='darkblue', foreground='white', borderwidth=2)
     cal.grid(column = 1, row = 8)
@@ -145,6 +147,7 @@ def name_validation(customer_name):
 def append_request():
     if (True == validation()):
         append_name()
+        clear_form()
     else:
         print('Input Errors')
         print(input_errors)
@@ -172,40 +175,46 @@ def venue_capacity_validation(venue_name,peeps):
 
 # Appending names to the events_list
 def append_name():
-    global events_list, customer, entry_people_counter, entry_email, total_entries,venue_locations
-    events_list.append(
-        [customer.get(), int(entry_people_counter.get()), entry_email.get(), venue_locations.get()])
+    global events_list, customer, entry_people_counter, entry_email,venue_locations, cal
+
+    event_entry = {
+        'name': customer.get(),
+        'peeps': entry_people_counter.get(),
+        'email': entry_email.get(),
+        'venue': venue_locations.get(),
+        'date': cal.get()
+    }
+    events_list.append(event_entry)
+    print(events_list)
+
+# self explanatory
+def clear_form():
     customer.delete(0, 'end')
     entry_people_counter.delete(0, 'end')
     entry_email.delete(0, 'end')
-
-    total_entries += 1
-    print(events_list)
+# 
 
 # def character_limit(entry_text):
 #     if len(entry_people_counter.get()) < 2:
 #         entry_people_counter.set(entry_text.get()[-1])
 
-# Deletes a row of information depending on the inputed interger.
-def delete_row():
-    global events_list, delete_row, total_entries
-    del events_list[int(delete_row.get())]
-    total_entries = total_entries = 1
-    delete_row.delete(0, 'end')
+# NOTE: I cannot clean list after deleting a row, since I'm lacking more advanced techniques like classes among others
+# self explanatory 
+def delete_row(row_index):
+    print("row_index", row_index)
+    global events_list
+    del events_list[int(row_index)]
     print_names()
 
 # where the button hub is located (where all buttons are located)
 
-
 def setup_buttons():
-    global events_list, customer, entry_people_counter, entry_email, total_entries
+    global events_list, customer, entry_people_counter, entry_email
     Button(main_window, text="Quit", command=quit) .grid(column=0, row=1)
     Button(main_window, text="Submit Request",
            command=append_request) .grid(column=1, row=1)
     Button(main_window, text="Print all Requests",
            command=print_names) .grid(column=2, row=1)
-    Button(main_window, text="Delete",
-           command=delete_row) .grid(column=2, row=9)
     Label(main_window, text="Customer") .grid(column=0, row=2)
     customer = Entry(main_window)
     customer.grid(column=1, row=2)
@@ -221,17 +230,19 @@ def setup_buttons():
     entry_email = Entry(main_window)
     entry_email.grid(column=1, row=4)
     Label(main_window, text="Row#") .grid(column=0, row=9)
-    entry_row = Entry(main_window)
-    entry_row.grid(column=1, row=9)
+
+    delete_row_entry = Entry(main_window)
+    delete_row_entry.grid(column=1, row=9)
+    Button(main_window, text="Delete",
+           command= lambda: delete_row(delete_row_entry.get())) .grid(column=2, row=9)
 
 
 
 # The body where everything will be house like setup_buttons() and the main_window
 def main():
     global main_window
-    global events_list, customer, entry_people_counter, entry_email, total_entries
+    global events_list, customer, entry_people_counter, entry_email
     events_list = []
-    total_entries = 0
     main_window = Tk()
     main_window.title("Main Body")
     # Button(main_window, text="date", command=tk_calendar).grid()
