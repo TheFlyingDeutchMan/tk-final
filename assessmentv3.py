@@ -26,18 +26,20 @@ def quit():
 
 # print_names
 def print_names():
-    global events_list, total_entries, name_count
+    global events_list, total_entries
     name_count = 0
-    Label(main_window, font='bold', text="Row").grid(             column=0, row=10)
-    Label(main_window, font='bold', text="Name").grid(            column=1, row=10)
-    Label(main_window, font='bold', text="Number of People").grid(column=2, row=10)
-    Label(main_window, font='bold', text="Email").grid(           column=4, row=10)
-    Label(main_window, font='bold', text="Venue").grid(           column=6, row=10)
-    Label(main_window, font='bold', text="Date").grid(            column=8, row=10)
+    table_header = 10
+    table_body = 11
+    Label(main_window, font='bold', text="Row").grid(             column=0, row=table_header)
+    Label(main_window, font='bold', text="Name").grid(            column=1, row=table_header)
+    Label(main_window, font='bold', text="Number of People").grid(column=2, row=table_header)
+    Label(main_window, font='bold', text="Email").grid(           column=4, row=table_header)
+    Label(main_window, font='bold', text="Venue").grid(           column=6, row=table_header)
+    Label(main_window, font='bold', text="Date").grid(            column=8, row=table_header)
     # The Output
     while name_count < total_entries:
         # RowNum - Done
-        Label(main_window, text=name_count).grid(column=0, row=name_count+8)
+        Label(main_window, text=name_count).grid(column=0, row=name_count+11)
         # Name - Done
         Label(main_window, text=(events_list[name_count][0])).grid(
             column=1, row=name_count+11)
@@ -74,7 +76,8 @@ def tk_calendar(): #
 #             return False
 #     else:
 #         return False
-# Function that creates a drop box for the veubes
+
+# Function that creates a drop box for the venues
 def venue_locations():
     global venue_locations
     # Create a Tkinter variable
